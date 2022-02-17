@@ -24,6 +24,8 @@ class MySQLConnection:
                 if query.lower().find("insert") >= 0:
                     # INSERT queries will return the ID NUMBER of the row inserted
                     self.connection.commit()
+                    print('################')
+                    print(cursor.lastrowid)
                     return cursor.lastrowid
                 elif query.lower().find("select") >= 0:
                     # SELECT queries will return the data from the database as a LIST OF DICTIONARIES
@@ -32,6 +34,7 @@ class MySQLConnection:
                 else:
                     # UPDATE and DELETE queries will return nothing
                     self.connection.commit()
+            except Exception as e:
                     # if the query fails the method will return FALSE
                 print("Something went wrong", e)
                 return False

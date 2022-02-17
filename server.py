@@ -13,7 +13,6 @@ def index():
 
 @app.route('/create')
 def send():
-    users = User.get_all()
     return render_template("create.html")
 
 
@@ -25,12 +24,50 @@ def create_user():
         "fname": request.form["fname"],
         "lname" : request.form["lname"],
         "email" : request.form["email"]
+        
     }
-    # We pass the data dictionary into the save method from the Friend class.
-    User.save(data)
+    # We pass the data dictionary into the save method from the User class.
+    user_id = User.save(data)
+    print("########")
+    print(user_id)
     # Don't forget to redirect after saving to the database.
-    return redirect('/')
+    return redirect(f'/user/{user_id}/show')
 
+@app.route('/user/<int:user_id>/show')
+def show_user(user_id):
+    data = {
+        "user_id": user_id
+    }
+    user = User.get_one(data)
+    return render_template("read_one.html", user=user)
+
+@app.route('/edit/<int:user_id>')
+def send2(user_id):
+    data = {
+        "user_id": user_id
+    }
+    user = User.get_one(data)
+    return render_template("edit_one.html", user = user)
+
+@app.route('/user/<int:user_id>/update', methods =['POST'])
+def update_user(user_id):
+
+    data = {
+        'id': user_id,
+        'first_name': request.form['fname'],
+        'last_name': request.form['lname'],
+        'email': request.form['email']
+    }
+
+    User.update_user(data)
+    return redirect(f'/user/{user_id}/show')
+
+@app.route('/user/<int:user_id>/delete')
+def delete_user(user_id):
+
+    User.delete_user({'id':user_id})
+
+    return redirect('/')
 
 
 if __name__ == "__main__":
